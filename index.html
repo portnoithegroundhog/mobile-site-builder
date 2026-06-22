@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Page Builder - Standalone</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-900 flex items-center justify-center gap-2">
+                <!-- Inline SVG Smartphone Icon -->
+                <svg class="text-blue-600" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                Mobile Page Builder
+            </h1>
+            <p class="text-slate-500 mt-2">Add elements and export a standalone mobile site natively in your browser</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Builder Side (Editor Blocks) -->
+            <div class="lg:col-span-7 space-y-6">
+                <!-- Action Buttons to Insert New Elements -->
+                <div class="flex flex-wrap gap-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 w-full mb-1">Add Block:</span>
+                    <button onclick="addElement('title')" class="flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-bold border border-blue-100 hover:bg-blue-100/50 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Title
+                    </button>
+                    <button onclick="addElement('image')" class="flex items-center gap-1.5 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-sm font-bold border border-emerald-100 hover:bg-emerald-100/50 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Image
+                    </button>
+                    <button onclick="addElement('embed')" class="flex items-center gap-1.5 px-4 py-2 bg-purple-50 text-purple-700 rounded-lg text-sm font-bold border border-purple-100 hover:bg-purple-100/50 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Embed
+                    </button>
+                    <button onclick="addElement('text')" class="flex items-center gap-1.5 px-4 py-2 bg-orange-50 text-orange-700 rounded-lg text-sm font-bold border border-orange-100 hover:bg-orange-100/50 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Text
+                    </button>
+                </div>
+
+                <!-- Editor Container -->
+                <div id="editor-container" class="space-y-4"></div>
+
+                <!-- Bottom action area -->
+                <button onclick="generatePage()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    Refresh Mobile Preview
+                </button>
+            </div>
+
+            <!-- Preview Side (Mobile Frame Mockup) -->
+            <div class="lg:col-span-5 flex flex-col items-center">
+                <h2 class="text-lg font-bold flex items-center gap-2 mb-4 self-start text-slate-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    Mobile Live Preview
+                </h2>
+
+                <div class="relative w-[300px] h-[600px] bg-slate-900 rounded-[2.5rem] border-[8px] border-slate-800 shadow-2xl overflow-hidden flex flex-col">
+                    <!-- Virtual Status Bar -->
+                    <div class="h-6 bg-slate-900/10 backdrop-blur-sm w-full flex justify-between px-6 pt-1 items-center text-[10px] text-slate-500 font-bold select-none absolute top-0 left-0 z-20 pointer-events-none">
+                        <span>9:41</span>
+                        <div class="flex gap-1 items-center">
+                            <span class="w-2.5 h-2.5 rounded-full border border-slate-500"></span>
+                            <span class="w-3.5 h-2 bg-slate-500 rounded-xs"></span>
+                        </div>
+                    </div>
+                    <!-- Virtual Content Viewport -->
+                    <div id="preview-viewport" class="bg-white flex-grow overflow-y-auto scrollbar-hide pt-6 flex flex-col">
+                        <div class="h-full flex flex-col items-center justify-center text-slate-300 p-8 text-center select-none">
+                            <svg class="opacity-20 mb-3" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                            <p class="text-sm font-semibold">Live Simulation Empty</p>
+                            <p class="text-xs text-slate-400 mt-1">Add details on the left and see them appear immediately!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Actions -->
+                <div id="export-actions" class="mt-6 w-full max-w-[300px] space-y-2 hidden">
+                    <button onclick="downloadHtml()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-md shadow-emerald-100 flex items-center justify-center gap-2 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download HTML File
+                    </button>
+                    <button onclick="copyToClipboard()" id="copy-btn" class="w-full py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Copy Source Code
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Logic - Pure Vanilla DOM Controller -->
+    <script>
+        // Internal State
+        let elements = [
+            { id: '1', type: 'title', content: '' },
+            { id: '2', type: 'image', content: null },
+            { id: '3', type: 'embed', content: '' },
+            { id: '4', type: 'text', content: '' }
+        ];
+
+        let generatedHtml = "";
+
+        // Safe Unique ID Generator
+        function generateId() {
+            return 'id-' + Math.random().toString(36).substring(2, 11) + '-' + Date.now().toString(36);
+        }
+
+        // Add element
+        function addElement(type) {
+            const newElement = {
+                id: generateId(),
+                type: type,
+                content: type === 'image' ? null : ''
+            };
+            elements.push(newElement);
+            renderEditor();
+            updatePreview();
+        }
+
+        // Delete element
+        function deleteElement(id) {
+            elements = elements.filter(el => el.id !== id);
+            renderEditor();
+            updatePreview();
+        }
+
+        // Clear element content
+        function clearElement(id) {
+            const index = elements.findIndex(el => el.id === id);
+            if (index !== -1) {
+                elements[index].content = elements[index].type === 'image' ? null : '';
+                
+                // Instantly update UI without breaking keyboard focus
+                const input = document.getElementById(`input-${id}`);
+                if (input) input.value = '';
+                
+                if (elements[index].type === 'image') {
+                    const imgPlaceholder = document.getElementById(`img-placeholder-${id}`);
+                    if (imgPlaceholder) {
+                        imgPlaceholder.innerHTML = `<span class="text-slate-400 text-sm font-semibold">Click to upload cover image</span>`;
+                    }
+                }
+                updatePreview();
+            }
+        }
+
+        // Move element ordering
+        function moveElement(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= elements.length) return;
+            const temp = elements[index];
+            elements[index] = elements[newIndex];
+            elements[newIndex] = temp;
+            renderEditor();
+            updatePreview();
+        }
+
+        // Trigger updates on simple text alterations
+        function handleTextChange(id, value) {
+            const index = elements.findIndex(el => el.id === id);
+            if (index !== -1) {
+                elements[index].content = value;
+                updatePreview(); // Re-render preview viewport instantly as the user types
+            }
+        }
+
+        // Handle Base64 Image Processing
+        function handleImageUpload(id, input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const index = elements.findIndex(el => el.id === id);
+                    if (index !== -1) {
+                        elements[index].content = reader.result;
+                        const imgPlaceholder = document.getElementById(`img-placeholder-${id}`);
+                        if (imgPlaceholder) {
+                            imgPlaceholder.innerHTML = `<img src="${reader.result}" class="max-h-40 mx-auto object-contain rounded-lg" alt="Uploaded Image">`;
+                        }
+                        updatePreview();
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Handle Local TXT File Import
+        function handleTxtImport(id, input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const index = elements.findIndex(el => el.id === id);
+                    if (index !== -1) {
+                        elements[index].content = e.target.result;
+                        const textarea = document.getElementById(`input-${id}`);
+                        if (textarea) textarea.value = e.target.result;
+                        updatePreview();
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        // Update the Live Preview Area in real-time
+        function updatePreview() {
+            const viewport = document.getElementById('preview-viewport');
+            const exportActions = document.getElementById('export-actions');
+            
+            // Check if there are elements with populated values
+            const hasData = elements.some(el => el.content !== null && el.content !== '');
+            
+            if (!hasData) {
+                viewport.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-slate-300 p-8 text-center select-none">
+                        <svg class="opacity-20 mb-3" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                        <p class="text-sm font-semibold">Live Simulation Empty</p>
+                        <p class="text-xs text-slate-400 mt-1">Add details on the left and see them appear immediately!</p>
+                    </div>
+                `;
+                exportActions.classList.add('hidden');
+                return;
+            }
+
+            exportActions.classList.remove('hidden');
+            viewport.innerHTML = '';
+
+            elements.forEach(el => {
+                if (!el.content && el.type !== 'title') return;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = "w-full flex-shrink-0 animate-in fade-in duration-300";
+
+                if (el.type === 'title') {
+                    wrapper.innerHTML = `
+                        <div class="p-4 border-b pt-8 text-center">
+                            <h1 class="text-xl font-bold text-blue-600 break-words leading-tight">${el.content || 'Untitled Page'}</h1>
+                        </div>
+                    `;
+                } else if (el.type === 'image' && el.content) {
+                    wrapper.innerHTML = `
+                        <div class="w-full bg-black">
+                            <img src="${el.content}" class="w-full h-auto block object-contain" alt="Content Cover">
+                        </div>
+                    `;
+                } else if (el.type === 'embed' && el.content) {
+                    // Normalize iframe embed responsive formatting on preview viewport
+                    let normalized = el.content;
+                    if (normalized.includes('<iframe')) {
+                        normalized = normalized.replace('<iframe', '<iframe style="width: 100% !important; aspect-ratio: 16/9; border:none;"');
+                    }
+                    wrapper.innerHTML = `<div class="w-full bg-slate-100 overflow-hidden line-height-0">${normalized}</div>`;
+                } else if (el.type === 'text' && el.content) {
+                    wrapper.innerHTML = `
+                        <div class="p-5 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed break-words">
+                            ${el.content}
+                        </div>
+                    `;
+                }
+
+                viewport.appendChild(wrapper);
+            });
+            
+            // Add native watermark matching exported code footer
+            const footerWatermark = document.createElement('div');
+            footerWatermark.className = "p-6 text-center text-[10px] text-slate-400 border-t mt-auto";
+            footerWatermark.textContent = "Generated by Mobile Page Builder";
+            viewport.appendChild(footerWatermark);
+        }
+
+        // Render editor panels to customize values
+        function renderEditor() {
+            const container = document.getElementById('editor-container');
+            container.innerHTML = '';
+
+            elements.forEach((el, index) => {
+                const block = document.createElement('div');
+                block.className = "bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden";
+                
+                // Color highlight indicator based on block type
+                let accentBorder = "border-blue-500";
+                if (el.type === 'image') accentBorder = "border-emerald-500";
+                if (el.type === 'embed') accentBorder = "border-purple-500";
+                if (el.type === 'text') accentBorder = "border-orange-500";
+
+                block.innerHTML = `
+                    <!-- Header Action Panel -->
+                    <div class="bg-slate-50 px-4 py-2 flex items-center justify-between border-b border-slate-100 select-none">
+                        <div class="flex items-center gap-3">
+                            <div class="flex flex-col">
+                                <button onclick="moveElement(${index}, -1)" ${index === 0 ? 'disabled' : ''} class="text-slate-400 hover:text-blue-600 disabled:opacity-25 disabled:hover:text-slate-400 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                </button>
+                                <button onclick="moveElement(${index}, 1)" ${index === elements.length - 1 ? 'disabled' : ''} class="text-slate-400 hover:text-blue-600 disabled:opacity-25 disabled:hover:text-slate-400 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                </button>
+                            </div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full ${accentBorder.replace('border-', 'bg-')} mr-1"></span>
+                                ${el.type} block
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="clearElement('${el.id}')" class="flex items-center gap-1 p-1.5 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg text-[10px] font-black transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                                CLEAR
+                            </button>
+                            <button onclick="deleteElement('${el.id}')" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Customizable Parameters -->
+                    <div class="p-4 border-l-4 ${accentBorder}">
+                        ${renderBlockInput(el)}
+                    </div>
+                `;
+                container.appendChild(block);
+            });
+        }
+
+        // Sub-router for element customization layouts
+        function renderBlockInput(el) {
+            const val = el.content || '';
+            
+            if (el.type === 'title') {
+                return `
+                    <input type="text" id="input-${el.id}" oninput="handleTextChange('${el.id}', this.value)" value="${val}" placeholder="Enter core layout heading..." class="w-full px-3 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-blue-500 font-bold text-lg transition-all">
+                `;
+            }
+            
+            if (el.type === 'image') {
+                return `
+                    <div class="space-y-3">
+                        <div onclick="document.getElementById('file-input-${el.id}').click()" id="img-placeholder-${el.id}" class="cursor-pointer border-2 border-dashed border-slate-200 hover:border-emerald-500 hover:bg-slate-50 rounded-xl min-h-[110px] flex flex-col items-center justify-center p-4 transition-all overflow-hidden text-center">
+                            ${el.content ? `<img src="${el.content}" class="max-h-40 mx-auto object-contain rounded-lg" />` : `<span class="text-slate-400 text-sm font-semibold">Click to upload cover image</span>`}
+                        </div>
+                        <input type="file" id="file-input-${el.id}" onchange="handleImageUpload('${el.id}', this)" accept="image/*" class="hidden">
+                    </div>
+                `;
+            }
+            
+            if (el.type === 'embed') {
+                return `
+                    <textarea id="input-${el.id}" oninput="handleTextChange('${el.id}', this.value)" placeholder="Paste raw iframe, video or audio playlist code here..." class="w-full px-3 py-2 h-20 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-purple-500 font-mono text-xs transition-all leading-relaxed">${val}</textarea>
+                `;
+            }
+            
+            if (el.type === 'text') {
+                return `
+                    <div class="space-y-2">
+                        <textarea id="input-${el.id}" oninput="handleTextChange('${el.id}', this.value)" placeholder="Type responsive contents..." class="w-full px-3 py-2 h-32 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-orange-500 text-sm transition-all leading-relaxed">${val}</textarea>
+                        
+                        <div class="flex items-center justify-between">
+                            <button onclick="document.getElementById('txt-input-${el.id}').click()" class="text-[10px] font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-wider flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                Load from TXT file
+                            </button>
+                            <input type="file" id="txt-input-${el.id}" onchange="handleTxtImport('${el.id}', this)" accept=".txt" class="hidden">
+                        </div>
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        // Generate final compiled standalone production page code
+        function generatePage() {
+            const mainTitle = elements.find(el => el.type === 'title')?.content || 'Mobile Page';
+            
+            const elementsHtml = elements.map(el => {
+                if (!el.content && el.type !== 'title') return '';
+                switch (el.type) {
+                    case 'title':
+                        return `<header><h1>${el.content || 'Untitled Page'}</h1></header>`;
+                    case 'image':
+                        return `<div class="image-container"><img src="${el.content}" alt="Cover Graphic"></div>`;
+                    case 'embed':
+                        // Clean aspect layout scaling parameters
+                        let embedCode = el.content;
+                        if (embedCode.includes('<iframe') && !embedCode.includes('style=')) {
+                            embedCode = embedCode.replace('<iframe', '<iframe style="width: 100% !important; aspect-ratio: 16/9; border:none;"');
+                        }
+                        return `<div class="embed-container">${embedCode}</div>`;
+                    case 'text':
+                        return `<article class="content">${el.content}</article>`;
+                    default:
+                        return '';
+                }
+            }).join('\n        ');
+
+            generatedHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>${mainTitle}</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --accent: #3b82f6;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+        header {
+            padding: 24px 20px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            word-wrap: break-word;
+        }
+        .image-container {
+            width: 100%;
+            background: #000;
+            line-height: 0;
+        }
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+        .embed-container {
+            width: 100%;
+            background: #f1f5f9;
+            display: block;
+            overflow: hidden;
+            line-height: 0;
+        }
+        .embed-container iframe, 
+        .embed-container video {
+            width: 100% !important;
+            border: none;
+            display: block;
+            aspect-ratio: 16 / 9;
+        }
+        .content {
+            padding: 24px 20px;
+            white-space: pre-wrap;
+            font-size: 1.1rem;
+            flex-grow: 1;
+            word-wrap: break-word;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            padding: 30px 20px;
+            border-top: 1px solid #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        ${elementsHtml}
+        <footer>Generated by Mobile Page Builder</footer>
+    </div>
+</body>
+</html>`;
+
+            updatePreview();
+        }
+
+        // Save layout parameters as dynamic HTML file download link
+        function downloadHtml() {
+            generatePage(); // Compile up-to-date parameters
+            const blob = new Blob([generatedHtml], {type: 'text/html'});
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            
+            const mainTitle = elements.find(el => el.type === 'title')?.content || 'mobile_page';
+            a.download = `${mainTitle.toLowerCase().replace(/\s+/g, '_')}.html`;
+            
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Copy raw compiled markup code safely to clipboard using cross-protocol execution fallback
+        function copyToClipboard() {
+            generatePage(); // Ensure raw payload is compiled
+            const textArea = document.createElement("textarea");
+            textArea.value = generatedHtml;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                const copyBtn = document.getElementById('copy-btn');
+                copyBtn.innerHTML = `
+                    <svg class="text-emerald-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Source Code Copied!
+                `;
+                setTimeout(() => {
+                    copyBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Copy Source Code
+                    `;
+                }, 2000);
+            } catch (err) {
+                console.error('Copy execution error', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Startup Trigger
+        window.addEventListener('DOMContentLoaded', () => {
+            renderEditor();
+            updatePreview();
+        });
+    </script>
+</body>
+</html>
